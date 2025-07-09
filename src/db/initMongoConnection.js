@@ -12,7 +12,7 @@ export async function initMongoConnection() {
         throw new Error ('Missing env variables');
     }
 
-    const mongoUrl = `mongodb+srv://${encodeURLComponent(MONGODB_USER)}:${encodeURLComponent(MONGODB_PASSWORD)}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
+    const mongoUrl = `mongodb+srv://${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
     try {
         await mongoose.connect(mongoUrl);
         console.log('Connection success');

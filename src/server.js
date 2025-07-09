@@ -1,14 +1,17 @@
 import express from 'express';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
+import router from './routes/contactRout.js';
 
 
 
 export const setupServer = () => {
-const add = express();
+const app = express();
 
 app.use(cors());
 app.use(pinoHttp());
+
+app.use('/contacts', router)
 
 app.use((req, res) => {
     res.status(404).json({

@@ -19,7 +19,7 @@ const contactsSchema = new mongoose.Schema(
         },
         contactType: {
             type: String,
-            enum: ['wokr', 'home', 'personal'],
+            enum: ['work', 'home', 'personal'],
             required: true,
             default: 'personal',
         },
