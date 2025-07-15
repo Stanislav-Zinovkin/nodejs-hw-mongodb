@@ -1,5 +1,5 @@
 import notfoundHandler from "../middlewares/notFoundHandler.js";
-import { createContact, getAllContacts, getContactsById, updateContact } from "../services/contacts.js";
+import { createContact, getAllContacts, getContactsById, updateContact, deleteContact } from "../services/contacts.js";
 import createHttpError from "http-errors";
 
 export const handleGetAllContacts = async (req, res) => {
@@ -57,4 +57,14 @@ export const handleUpdateContact = async(req,res) => {
         message: 'Successfully patched a contact',
         data: updatedContact,
     });
+}
+export const handleDeleteContact = async(req,res) => {
+    const {contactId} = req.params;
+    const result = await deleteContact(contactId);
+
+    if (!result){
+        throw createHttpError(404, 'Contact not found');
+
+    }
+    res.status(204).send();
 }
