@@ -1,14 +1,47 @@
 import notfoundHandler from "../middlewares/notFoundHandler.js";
-import { createContact, getAllContacts, getContactsById, updateContact, deleteContact } from "../services/contacts.js";
+import { createContact, getAllContacts, getContactsById, updateContact, deleteContact, countContacts } from "../services/contacts.js";
 import createHttpError from "http-errors";
+import { parseNumber } from "../utils/parsePaginationParams.js";
 
 export const handleGetAllContacts = async (req, res) => {
-    const contacts = await getAllContacts();
+    const {type, isFavourite} = req.query;
+    const page = parseNumber(req.query.page, 1);
+    const perPage = parseNumber(req.query.perPage, 10);
+    const {sortBy = 'name', sortOrder = 'asc'} = req.query;
+    const skip = (page - 1) * perPage;
+    const allowedSortFields = ['name', 'email', 'phoneNumber'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'name';
+    const sortDirection = sortOrder === 'desc' ? -1 : 1;
+    const sortCriteria = {[sortField]: sortDirection};
+    const allowedTypes = ['work', 'home', 'personal'];
+    const filter = {};
+        if(allowedTypes.includes(type)) {
+            filter.contactType = type;
+        }
+        if (isFavourite === 'true') filter.isFavourite = true;
+        else if (isFavourite === 'false') filter.isFavourite = false;
+    ;
+
+    const [totalItems, contacts] = await Promise.all([
+        countContacts(filter),
+        getAllContacts(skip, perPage, sortCriteria, filter)
+    ]);
+    const totalPages = Math.ceil(totalItems / perPage);
+    const hasPreviousPage = page > 1;
+    const hasNextPage = page < totalPages;
 
     res.status(200).json({
         status: 200,
         message: 'Successfully found contacts',
-        data: contacts,
+        data: {
+            data: contacts,
+            page,
+            perPage,
+            totalItems,
+            totalPages,
+            hasPreviousPage,
+            hasNextPage
+        }
     });
 };
 
