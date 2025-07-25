@@ -3,11 +3,12 @@ import ctrlWrapper from '../utils/ctrlWrapper.js';
 import { handleGetAllContacts, handleGetContactById, handleCreateContact, handleDeleteContact, handleUpdateContact } from '../controllers/contactsController.js';
 import { createContactSchema, updateContactSchema } from '../schemas/contactsSchema.js';
 import { validateBody } from '../middlewares/validateBody.js';
+import { invalidFormatId } from '../middlewares/invalidFormatId.js';
 const router = express.Router();
 
 router.get('/', ctrlWrapper(handleGetAllContacts));
-router.get('/:contactId', ctrlWrapper(handleGetContactById));
+router.get('/:contactId', invalidFormatId,ctrlWrapper(handleGetContactById));
 router.post('/', validateBody(createContactSchema),ctrlWrapper(handleCreateContact));
-router.patch('/:contactId', validateBody(updateContactSchema),ctrlWrapper(handleUpdateContact));
-router.delete('/:contactId', ctrlWrapper(handleDeleteContact));
+router.patch('/:contactId', invalidFormatId, validateBody(updateContactSchema),ctrlWrapper(handleUpdateContact));
+router.delete('/:contactId', invalidFormatId, ctrlWrapper(handleDeleteContact));
 export default router;
