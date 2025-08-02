@@ -8,6 +8,9 @@ import { ONE_DAY, FIFTEEN_MINUTES } from "../index.js";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
+if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
+  throw new Error('JWT secrets are not defined');
+}
 export const loginUser = async(payload) => {
     const user = await User.findOne({email: payload.email});
     if(!user) {
