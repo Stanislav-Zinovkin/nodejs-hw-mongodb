@@ -5,10 +5,11 @@ import { Session } from "../models/sessionModel.js";
 import jwt from 'jsonwebtoken';
 import { ONE_DAY, FIFTEEN_MINUTES } from "../index.js";
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-
 export const loginUser = async(payload) => {
+
+    const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+    const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
     const user = await User.findOne({email: payload.email});
     if(!user) {
         throw createHttpError(404, 'User not found');
