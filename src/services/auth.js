@@ -1,7 +1,7 @@
 import createHttpError from "http-errors";
 import bcrypt from 'bcrypt';
-import { User } from "../models/userModel";
-import { Session } from "../models/sessionModel";
+import { User } from "../models/userModel.js";
+import { Session } from "../models/sessionModel.js";
 import jwt from 'jsonwebtoken';
 import { ONE_DAY, FIFTEEN_MINUTES } from "../index.js";
 
