@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { isValidObjectId } from "mongoose";
 
 export const createContactSchema = Joi.object({
         name: Joi.string().min(3).max(20).required().messages({
@@ -19,6 +20,12 @@ export const createContactSchema = Joi.object({
         contactType:Joi.string().valid('work', 'home', 'personal').required().messages({
          'any.only': 'Contact type must be one of work, home, or personal',
           'any.required': 'Contact type is required',
+        }),
+        parentId: Joi.string().custom((value, helper) => {
+          if(value && !isValidObjectId(value)) {
+               return helper.message('Parent id should be a valid mongo id')
+          }
+          return true;
         }),
            
 });

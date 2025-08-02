@@ -20,7 +20,9 @@ const sessionSchema = new mongoose.Schema({
     refreshTokenValidUntil: {
         type: Date,
         required: true,
-    }
+    },
+},
+    {timestamps: true, versionKey: false},
 
-})
+)
 export const Session = mongoose.model("Session", sessionSchema)

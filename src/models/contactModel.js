@@ -1,3 +1,4 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
 const contactsSchema = new mongoose.Schema(
@@ -23,6 +24,10 @@ const contactsSchema = new mongoose.Schema(
             required: true,
             default: 'personal',
         },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        }
     },
     {
         timestamps: true,

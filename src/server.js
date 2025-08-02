@@ -5,12 +5,14 @@ import router from './routes/contactRout.js';
 import errorHandler from './middlewares/errorHandlers.js';
 import notfoundHandler from './middlewares/notFoundHandler.js';
 import auth from './routes/auth.js'
+import cookieParser from 'cookie-parser';
 
 export const setupServer = () => {
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(pinoHttp());
+app.use(cookieParser());
 
 app.use('/auth', auth)
 app.use('/contacts', router)

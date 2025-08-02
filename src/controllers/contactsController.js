@@ -14,7 +14,8 @@ export const handleGetAllContacts = async (req, res) => {
     const sortDirection = sortOrder === 'desc' ? -1 : 1;
     const sortCriteria = {[sortField]: sortDirection};
     const allowedTypes = ['work', 'home', 'personal'];
-    const filter = {};
+    const userId = req.user._id;
+    const filter = {userId};
         if(allowedTypes.includes(type)) {
             filter.contactType = type;
         }
@@ -48,9 +49,9 @@ export const handleGetAllContacts = async (req, res) => {
 export const handleGetContactById = async (req, res) => {
     const {contactId} = req.params;
 
-    const contact = await getContactsById(contactId);
+    const contact = await getContactsById(contactId, req.user._id);
 
-    if(!contact) {
+    if(!contact ) {
         throw createHttpError(404, "Contact not found");
 
     }
@@ -66,7 +67,8 @@ export const handleCreateContact = async (req,res) => {
     if (!name || !phoneNumber || !contactType){
         throw createHttpError(400, "Missing required fields");
     }
-    const newContact = await createContact({name, phoneNumber,email, isFavourite, contactType});
+    const userId = req.user._id;
+    const newContact = await createContact({name, phoneNumber,email, isFavourite, contactType, userId});
 
     res.status(201).json({
         status: 201,
@@ -79,6 +81,11 @@ export const handleUpdateContact = async(req,res) => {
     const updateData = req.body;
     if(Object.keys(updateData).length === 0){
         throw createHttpError(400, 'Missing fields to update');
+    }
+
+    const existingContact = await getContactsById(contactId, req.params._id);
+    if (!existingContact) {
+        throw createHttpError(404, 'Contact not found');
     }
     const updatedContact = await updateContact(contactId, updateData);
     if(!updatedContact) {

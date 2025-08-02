@@ -4,8 +4,10 @@ import { handleGetAllContacts, handleGetContactById, handleCreateContact, handle
 import { createContactSchema, updateContactSchema } from '../schemas/contactsSchema.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { invalidFormatId } from '../middlewares/invalidFormatId.js';
+import { authenticate } from '../middlewares/authenticate.js';
 const router = express.Router();
 
+router.use(authenticate);
 router.get('/', ctrlWrapper(handleGetAllContacts));
 router.get('/:contactId', invalidFormatId('contactId'),ctrlWrapper(handleGetContactById));
 router.post('/', validateBody(createContactSchema),ctrlWrapper(handleCreateContact));
