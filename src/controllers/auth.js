@@ -47,7 +47,7 @@ export const loginUserController = async (req, res, next) => {
         maxAge: ONE_DAY,
         sameSite: 'strict',
     });
-    res.cookie('sessionId', session.sessionId || session._id, {
+    res.cookie('sessionId', session.sessionId , {
         httpOnly: true,
         maxAge: ONE_DAY,
         sameSite: 'strict',

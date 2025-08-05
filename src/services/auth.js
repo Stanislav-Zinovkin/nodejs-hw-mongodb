@@ -17,11 +17,15 @@ const createSession = () => {
 };
 
 export const loginUser = async(payload) => {
+   
+   console.log('Login attempt:', payload);
     const user = await User.findOne({email: payload.email});
     if(!user) {
         throw createHttpError(404, 'User not found');
     }
     const isEqual = await bcrypt.compare(payload.password, user.password);
+        console.log('Password match:', isEqual);
+
     if(!isEqual){
         throw createHttpError(401, 'Unauthorized');
     }
@@ -37,7 +41,7 @@ export const loginUser = async(payload) => {
     return {
         accessToken: session.accessToken,
         refreshToken: session.refreshToken,
-        sessionId: session._id,
+        sessionId: session._id.toString(),
     };
 };
 
