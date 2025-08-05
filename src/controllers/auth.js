@@ -4,14 +4,16 @@ import { loginUser } from '../services/auth.js';
 export const refreshSessionController = async (req, res, next) => {
  try {
     const {refreshToken} = req.cookies;
-
-   if(!refreshToken) {
+    const sessionId = req.cookies.sessionId;
+   
+    if(!refreshToken || !sessionId) {
     return res.status(401).json({
         status: 'error',
         message: 'Missing token',
     });
    }
-   const {accessToken, newRefreshToken} = await refreshSession(refreshToken);
+   
+   const {accessToken, refreshToken: newRefreshToken} = await refreshSession({ sessionId, refreshToken});
    res.cookie('refreshToken', newRefreshToken,
     {httpOnly: true,
         sameSite: 'strict',
@@ -19,6 +21,13 @@ export const refreshSessionController = async (req, res, next) => {
         maxAge: ONE_DAY,
     }
    );
+   res.cookie('sessionId',  sessionId, {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: true,
+    maxAge: ONE_DAY,
+    });
+
    res.status(200).json({
     status: 'success',
     message: 'Successfully refreshed a session',
