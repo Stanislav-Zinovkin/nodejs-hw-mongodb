@@ -21,7 +21,7 @@ export const refreshSessionController = async (req, res, next) => {
         maxAge: ONE_DAY,
     }
    );
-   res.cookie('sessionId',  sessionId, {
+   res.cookie('sessionId', sessionId, {
     httpOnly: true,
     sameSite: 'strict',
     secure: true,
@@ -41,14 +41,16 @@ export const loginUserController = async (req, res, next) => {
     
    try {
     const session =  await loginUser(req.body);
+    console.log('session:', session); 
     res.cookie('refreshToken', session.refreshToken, {
         httpOnly: true,
         maxAge: ONE_DAY,
         sameSite: 'strict',
     });
-    res.cookie('sessionId', session._id, {
+    res.cookie('sessionId', session.sessionId || session._id, {
         httpOnly: true,
         maxAge: ONE_DAY,
+        sameSite: 'strict',
     });
 
     res.status(200).json({
