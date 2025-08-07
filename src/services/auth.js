@@ -15,6 +15,23 @@ const createSession = () => {
         refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
     };
 };
+export const registerUser = async (payload) => {
+    const existingUser = await User.findOne({ email: payload.email });
+    if (existingUser) {
+        throw createHttpError(409, 'Email in use');
+    }
+
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+    const user = await User.create({
+        ...payload,
+        password: hashedPassword,
+    });
+
+    const userObj = user.toObject();
+    delete userObj.password;
+    return userObj;
+};
 
 export const loginUser = async(payload) => {
    
@@ -45,23 +62,7 @@ export const loginUser = async(payload) => {
     };
 };
 
-export const registerUser = async (payload) => {
-    const existingUser = await User.findOne({ email: payload.email });
-    if (existingUser) {
-        throw createHttpError(409, 'Email in use');
-    }
 
-    const hashedPassword = await bcrypt.hash(payload.password, 10);
-
-    const user = await User.create({
-        ...payload,
-        password: hashedPassword,
-    });
-
-    const userObj = user.toObject();
-    delete userObj.password;
-    return userObj;
-};
 
 export const refreshToken = async ({sessionId, refreshToken}) => {
    
