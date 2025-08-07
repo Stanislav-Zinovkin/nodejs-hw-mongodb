@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Contact } from "../models/contactModel.js";
 
 export const getAllContacts = (skip = 0, limit = 10, sort ={}, filter = {}) => {
@@ -9,7 +10,7 @@ export const countContacts = (filter = {}) => {
 };
 
 export const getContactsById = async (id, userId) => {
-    return  await Contact.findOne({_id: id, userId});
+    return  await Contact.findOne({_id: id, userId: mongoose.Types.ObjectId(userId)});
     
 }
 export const createContact = async (contactData) => {
@@ -18,10 +19,10 @@ export const createContact = async (contactData) => {
     return contact;
 }
 export const updateContact = async (id,userId, updateData) => {
-   return  await Contact.findOneAndUpdate({_id: id, userId}, updateData, {new: true});
+   return  await Contact.findOneAndUpdate({_id: id, userId: mongoose.Types.ObjectId(userId)}, updateData, {new: true});
     
 }
 export const deleteContact = async (id, userId) => {
-    return  await Contact.findOneAndDelete({_id: id, userId});
+    return  await Contact.findOneAndDelete({_id: id, userId: mongoose.Types.ObjectId(userId)});
     
 }

@@ -79,15 +79,16 @@ export const handleCreateContact = async (req,res) => {
 export const handleUpdateContact = async(req,res) => {
     const {contactId} = req.params;
     const updateData = req.body;
+    const userId = req.user._id;
     if(Object.keys(updateData).length === 0){
         throw createHttpError(400, 'Missing fields to update');
     }
 
-    const existingContact = await getContactsById(contactId, req.params._id);
+    const existingContact = await getContactsById(contactId, req.user._id);
     if (!existingContact) {
         throw createHttpError(404, 'Contact not found');
     }
-    const updatedContact = await updateContact(contactId, updateData);
+    const updatedContact = await updateContact(contactId,req.user._id, updateData);
     if(!updatedContact) {
         throw createHttpError(404, 'Contact not found');
 
@@ -100,7 +101,7 @@ export const handleUpdateContact = async(req,res) => {
 }
 export const handleDeleteContact = async(req,res) => {
     const {contactId} = req.params;
-    const result = await deleteContact(contactId);
+    const result = await deleteContact(contactId, req.user._id);
 
     if (!result){
         throw createHttpError(404, 'Contact not found');
