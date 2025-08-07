@@ -10,7 +10,7 @@ export const countContacts = (filter = {}) => {
 };
 
 export const getContactsById = async (id, userId) => {
-    return  await Contact.findOne({_id: id, userId: mongoose.Types.ObjectId(userId)});
+    return  await Contact.findOne({_id: id, userId: new mongoose.Types.ObjectId(userId)});
     
 }
 export const createContact = async (contactData) => {
@@ -19,10 +19,10 @@ export const createContact = async (contactData) => {
     return contact;
 }
 export const updateContact = async (id,userId, updateData) => {
-   return  await Contact.findOneAndUpdate({_id: id, userId: mongoose.Types.ObjectId(userId)}, updateData, {new: true});
+   return  await Contact.findOneAndUpdate({_id: id, userId: new mongoose.Types.ObjectId(userId)}, updateData, {new: true});
     
 }
 export const deleteContact = async (id, userId) => {
-    return  await Contact.findOneAndDelete({_id: id, userId: mongoose.Types.ObjectId(userId)});
+    return  await Contact.findOneAndDelete({_id: id, userId: new mongoose.Types.ObjectId(userId)});
     
 }
