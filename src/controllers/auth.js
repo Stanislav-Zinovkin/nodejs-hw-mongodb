@@ -1,6 +1,8 @@
+import createHttpError from 'http-errors';
 import { ONE_DAY } from '../index.js';
-import {logoutUser, refreshToken as refreshSession} from '../services/auth.js';
+import {logoutUser, refreshToken as refreshSession, sendRequestToken} from '../services/auth.js';
 import { loginUser } from '../services/auth.js';
+import { User } from '../models/userModel.js';
 export const refreshSessionController = async (req, res, next) => {
  try {
     const {refreshToken} = req.cookies;
@@ -73,4 +75,51 @@ export const logoutUserController = async (req, res) => {
     res.clearCookie('refreshToken');
 
     res.status(204).send();
+};
+export const sendResetEmailController = async (req,res,next) => {
+    try {
+    await sendRequestToken(req.body.email);
+    res.status(200).json({
+        message: "Reset password email has been successfully sent.",
+        status: 200,
+        data: {},
+    });
+} catch (error){
+    next(error);
 }
+};
+export const resetPasswordController = async (req,res,next) => {
+    try{
+        const {token, password} = req.body;
+
+        if (!token || !password){
+            throw createHttpError (400, 'Token and password are required!');
+        }
+        const secret = process.env.JWT_SECRET;
+        const decoded = jwt.verify(token, secret);
+
+        const user = await User.findOne({email: decoded.email});
+        if (!user) {
+            throw createHttpError(404, 'User not found');
+        }
+
+       
+        user.password = password;
+        await user.save();
+
+        res.status(200).json({
+            message: 'Password has been successfully reset',
+            status: 200,
+            data:{},
+        });
+    }catch (error) {
+        if(error.name === 'TokenExpiredError') {
+            return next(createHttpError(400,'Token has expired'));
+        }
+        if (error.name === 'JsonWebTokenError') {
+            return next(createHttpError(400, 'Invalid token'));
+
+        }
+        next(error);
+    }
+    }

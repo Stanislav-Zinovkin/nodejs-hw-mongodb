@@ -1,5 +1,7 @@
 import createHttpError from "http-errors";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { User } from "../models/userModel.js";
 import { Session } from "../models/sessionModel.js";
 import { randomBytes } from 'crypto';
@@ -97,3 +99,40 @@ export const logoutUser = async (sessionId) => {
         _id: sessionId
     });
 };
+export const sendRequestToken = async (email) => {
+    const user = await User.findOne({email});
+    if (!user) {
+        throw createHttpError(404, 'User not found');
+    }
+
+    const token = jwt.sign(
+        {email},
+        process.env.JWT_SECRET,
+        {expiresIn: '5m'}
+    );
+
+    const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: false,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: projectTraceSource.env.SMTP_FROM,
+        to: email,
+        subject: 'Reset your password',
+        html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link valid for 5 minutes.</p>`,
+
+    };
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (error){
+        throw createHttpError(500,'Failed to send the email, please ty again later.');
+    }
+}
