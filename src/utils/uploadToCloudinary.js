@@ -1,4 +1,4 @@
-import cloudinary from 'cloudinary';
+
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import cloudinary from './cloudinary.js';
