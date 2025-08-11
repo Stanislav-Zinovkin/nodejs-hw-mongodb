@@ -2,7 +2,7 @@ import notfoundHandler from "../middlewares/notFoundHandler.js";
 import { createContact, getAllContacts, getContactsById, updateContact, deleteContact, countContacts } from "../services/contacts.js";
 import createHttpError from "http-errors";
 import { parseNumber } from "../utils/parsePaginationParams.js";
-
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
 import { TEMP_UPLOAD_DIR } from "../index.js";
 
