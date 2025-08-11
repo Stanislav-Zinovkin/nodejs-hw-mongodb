@@ -155,13 +155,12 @@ export const resetPassword = async (payload) => {
     if(!user){
         throw createHttpError(404, 'USer not found');
     }
-    const encryptedPassword = await bcrypt.hash(payload.password, 10);
-     user.password = encryptedPassword;
-        await user.save();
+    user.password = payload.password;
+    await user.save();
 
     await User.updateOne({
         _id: user._id },
-    {password: encryptedPassword},);
+    {password: user.password},);
 };
 export const deleteUserSessions = async (userId) => {
   await Session.deleteMany({ userId });

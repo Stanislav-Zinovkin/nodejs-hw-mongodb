@@ -91,8 +91,8 @@ export const handleUpdateContact = async(req,res) => {
     const {contactId} = req.params;
     const updateData = req.body;
     const userId = req.user._id;
-    
-    if(Object.keys(updateData).length === 0){
+
+    if(Object.keys(updateData).length === 0 && !req.file){
         throw createHttpError(400, 'Missing fields to update');
     }
 
