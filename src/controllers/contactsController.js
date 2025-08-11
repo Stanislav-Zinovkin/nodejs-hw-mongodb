@@ -71,13 +71,18 @@ export const handleCreateContact = async (req,res) => {
     if (!name || !phoneNumber || !contactType){
         throw createHttpError(400, "Missing required fields");
     }
-    let photoUrl = null;
+  const photo = req.file;
+  console.log(photo);
+  let photoUrl;
 
-    if(req.file){
-  
-        photoUrl = await uploadToCloudinary(req.file.path, 'contacts');
-        await fs.unlink(req.file.path);
+  if (photo) {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      photoUrl = await uploadToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
     }
+  }
+
     const userId = req.user._id;
     const newContact = await createContact({name, phoneNumber,email, isFavourite, contactType, userId, photo: photoUrl,});
 
@@ -91,10 +96,20 @@ export const handleUpdateContact = async(req,res) => {
     const {contactId} = req.params;
     const updateData = req.body;
     const userId = req.user._id;
-
-    if(Object.keys(updateData).length === 0 && !req.file){
+    
+     const photo = req.file;
+     let photoUrl;
+       if(Object.keys(updateData).length === 0 && !req.file){
         throw createHttpError(400, 'Missing fields to update');
     }
+
+  if (photo) {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      photoUrl = await uploadToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
 
     const existingContact = await getContactsById(contactId, req.user._id);
     if (!existingContact) {
