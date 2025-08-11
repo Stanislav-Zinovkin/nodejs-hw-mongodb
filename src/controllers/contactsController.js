@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import { parseNumber } from "../utils/parsePaginationParams.js";
 
 import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
+import { TEMP_UPLOAD_DIR } from "../index.js";
 
 export const handleGetAllContacts = async (req, res) => {
     const {type, isFavourite} = req.query;
@@ -66,13 +67,19 @@ export const handleGetContactById = async (req, res) => {
 
 export const handleCreateContact = async (req,res) => {
 
-    const photoUrl = req.file ? req.file.path : null;
     const {name, phoneNumber, email, isFavourite, contactType} = req.body;
     if (!name || !phoneNumber || !contactType){
         throw createHttpError(400, "Missing required fields");
     }
+    let photoUrl = null;
+
+    if(req.file){
+  
+        photoUrl = await uploadToCloudinary(req.file.path, 'contacts');
+        await fs.unlink(req.file.path);
+    }
     const userId = req.user._id;
-    const newContact = await createContact({name, phoneNumber,email, isFavourite, contactType, userId});
+    const newContact = await createContact({name, phoneNumber,email, isFavourite, contactType, userId, photo: photoUrl,});
 
     res.status(201).json({
         status: 201,
@@ -84,7 +91,7 @@ export const handleUpdateContact = async(req,res) => {
     const {contactId} = req.params;
     const updateData = req.body;
     const userId = req.user._id;
-    const photo = req.file;
+    
     if(Object.keys(updateData).length === 0){
         throw createHttpError(400, 'Missing fields to update');
     }
@@ -93,9 +100,10 @@ export const handleUpdateContact = async(req,res) => {
     if (!existingContact) {
         throw createHttpError(404, 'Contact not found');
     }
-    if (photo){
-        const photoUrl = await saveFileToUploadDir(photo);
-        updateData.photoUrl= photoUrl;
+    if (req.file){
+    const photo = await uploadToCloudinary(req.file.path, 'contacts');
+    await fs.unlink(req.file.path);
+    updateData.photo = photo;
     }
     const updatedContact = await updateContact(contactId,req.user._id, updateData);
     if(!updatedContact) {

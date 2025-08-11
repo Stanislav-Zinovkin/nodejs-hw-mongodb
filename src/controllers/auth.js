@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 import { ONE_DAY } from '../index.js';
-
+import { deleteUserSessions } from '../services/auth.js';
 import {logoutUser, refreshToken as refreshSession, sendRequestToken} from '../services/auth.js';
 import { loginUser } from '../services/auth.js';
 import { User } from '../models/userModel.js';
