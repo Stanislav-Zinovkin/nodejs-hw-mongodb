@@ -124,7 +124,7 @@ export const sendRequestToken = async (email) => {
     });
 
     const mailOptions = {
-        from: projectTraceSource.env.SMTP_FROM,
+        from: process.env.SMTP_FROM,
         to: email,
         subject: 'Reset your password',
         html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link valid for 5 minutes.</p>`,
@@ -136,3 +136,33 @@ export const sendRequestToken = async (email) => {
         throw createHttpError(500,'Failed to send the email, please ty again later.');
     }
 }
+export const resetPassword = async (payload) => {
+    let entries;
+
+    try{
+        entries = jwt.verify(payload.token,
+            process.env.JWT_SECRET
+        );
+    } catch(error){
+        if(error ) throw createHttpError(401, 'Token expired or invalid');
+        throw error;
+    }
+    const user = await User.findOne({
+        email: entries.email,
+        _id: entries.sub,
+    });
+
+    if(!user){
+        throw createHttpError(404, 'USer not found');
+    }
+    const encryptedPassword = await bcrypt.hash(payload.password, 10);
+     user.password = encryptedPassword;
+        await user.save();
+
+    await User.updateOne({
+        _id: user._id },
+    {password: encryptedPassword},);
+};
+export const deleteUserSessions = async (userId) => {
+  await Session.deleteMany({ userId });
+};

@@ -5,12 +5,13 @@ import { createContactSchema, updateContactSchema } from '../schemas/contactsSch
 import { validateBody } from '../middlewares/validateBody.js';
 import { invalidFormatId } from '../middlewares/invalidFormatId.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/multer.js';
 const router = express.Router();
 
 router.use(authenticate);
 router.get('/', ctrlWrapper(handleGetAllContacts));
 router.get('/:contactId', invalidFormatId('contactId'),ctrlWrapper(handleGetContactById));
-router.post('/', validateBody(createContactSchema),ctrlWrapper(handleCreateContact));
-router.patch('/:contactId', invalidFormatId('contactId'), validateBody(updateContactSchema),ctrlWrapper(handleUpdateContact));
+router.post('/', upload.single('photo'), validateBody(createContactSchema), ctrlWrapper(handleCreateContact));
+router.patch('/:contactId', upload.single('photo'),invalidFormatId('contactId'), validateBody(updateContactSchema),ctrlWrapper(handleUpdateContact));
 router.delete('/:contactId', invalidFormatId('contactId'), ctrlWrapper(handleDeleteContact));
 export default router;

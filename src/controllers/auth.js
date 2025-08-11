@@ -1,8 +1,10 @@
 import createHttpError from 'http-errors';
 import { ONE_DAY } from '../index.js';
+
 import {logoutUser, refreshToken as refreshSession, sendRequestToken} from '../services/auth.js';
 import { loginUser } from '../services/auth.js';
 import { User } from '../models/userModel.js';
+import jwt from 'jsonwebtoken';
 export const refreshSessionController = async (req, res, next) => {
  try {
     const {refreshToken} = req.cookies;
@@ -96,7 +98,12 @@ export const resetPasswordController = async (req,res,next) => {
             throw createHttpError (400, 'Token and password are required!');
         }
         const secret = process.env.JWT_SECRET;
-        const decoded = jwt.verify(token, secret);
+        let decoded;
+        try {
+            decoded = jwt.verify(token, secret);
+        } catch (error) {
+            return next(createHttpError(401, 'Token is expired or invalid.'));
+        }
 
         const user = await User.findOne({email: decoded.email});
         if (!user) {
@@ -107,19 +114,15 @@ export const resetPasswordController = async (req,res,next) => {
         user.password = password;
         await user.save();
 
+        await deleteUserSessions(user._id);
+
+
         res.status(200).json({
             message: 'Password has been successfully reset',
             status: 200,
             data:{},
         });
     }catch (error) {
-        if(error.name === 'TokenExpiredError') {
-            return next(createHttpError(400,'Token has expired'));
-        }
-        if (error.name === 'JsonWebTokenError') {
-            return next(createHttpError(400, 'Invalid token'));
-
-        }
         next(error);
     }
     }
