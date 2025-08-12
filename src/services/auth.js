@@ -110,6 +110,7 @@ export const sendRequestToken = async (email) => {
         process.env.JWT_SECRET,
         {expiresIn: '5m'}
     );
+    console.log('Reset password token:', token);
 
     const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
 
