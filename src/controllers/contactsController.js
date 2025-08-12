@@ -97,28 +97,20 @@ export const handleUpdateContact = async(req,res) => {
     const updateData = req.body;
     const userId = req.user._id;
     
-     const photo = req.file;
-     let photoUrl;
        if(Object.keys(updateData).length === 0 && !req.file){
         throw createHttpError(400, 'Missing fields to update');
     }
-
-  if (photo) {
-    if (process.env.ENABLE_CLOUDINARY === 'true') {
-      photoUrl = await uploadToCloudinary(photo);
-    } else {
-      photoUrl = await saveFileToUploadDir(photo);
-    }
-  }
 
     const existingContact = await getContactsById(contactId, req.user._id);
     if (!existingContact) {
         throw createHttpError(404, 'Contact not found');
     }
     if (req.file){
-    const photo = await uploadToCloudinary(req.file.path, 'contacts');
-    await fs.unlink(req.file.path);
-    updateData.photo = photo;
+      if(process.env.ENABLE_CLOUDINARY === 'true'){
+        updateData.photo = await uploadToCloudinary(req.file);
+      } else {
+        updateData.photo = await saveFileToUploadDir(req.file);
+      }
     }
     const updatedContact = await updateContact(contactId,req.user._id, updateData);
     if(!updatedContact) {

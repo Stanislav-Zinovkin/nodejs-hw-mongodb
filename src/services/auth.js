@@ -133,6 +133,7 @@ export const sendRequestToken = async (email) => {
     try {
         await transporter.sendMail(mailOptions);
     } catch (error){
+        console.error('Nodemailer error:', error);
         throw createHttpError(500,'Failed to send the email, please ty again later.');
     }
 }
