@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "build": "npm run build-docs",
+    "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
+    "preview-docs": "redocly preview"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,7 @@
   "homepage": "https://github.com/Stanislav-Zinovkin/nodejs-hw-mongodb#readme",
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@redocly/cli": "^2.0.5",
     "eslint": "^9.30.1",
     "globals": "^16.3.0",
     "nodemon": "^3.1.10",
