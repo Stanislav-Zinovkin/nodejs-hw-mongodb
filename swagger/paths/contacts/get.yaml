@@ -1,0 +1,39 @@
+tags: 
+  - Contacts
+summary: Get all contacts
+operationId: getAllContacts
+description: Returns a list of all contacts. Can filter by query parameters.
+security:
+  - bearerAuth: []
+parameters:
+  - name: name
+    in: query
+    schema:
+      type: string
+    description: Filter by contact name (optional)
+  - name: contactType
+    in: query
+    schema:
+      type: string
+      enum: [work, home, personal]
+    description: Filter by contact type (optional)
+  - name: isFavourite
+    in: query
+    schema:
+      type: boolean
+    description: Filter contact by favourite.
+responses:
+  '200':
+    description: List of contacts
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../../components/schemas/Contact.yaml' 
+  '401':
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/ErrorResponse.yaml'                           

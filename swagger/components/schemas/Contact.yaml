@@ -1,0 +1,36 @@
+type: object
+properties:
+  name:
+    type: string
+    description: Contact name
+    minLength: 3
+    maxLength: 20
+  phoneNumber:
+    type: string
+    description: Phone number
+    pattern: '^[0-9()+\s-]+$'
+    minLength: 3
+    maxLength: 20
+  email:
+    type: string
+    description: Contact email
+    format: email
+    maxLength: 50
+  photo:
+    type: string
+    description: URL contact photo
+    format: uri
+  isFavourite:
+    type: boolean
+    description: Choosen contact
+  contactType:
+    type: string
+    enum: [work, home, personal]
+    description: Contact type
+  parentId:
+    type: string
+    description: Parent ID
+required:
+  - name
+  - phoneNumber
+  - contactType

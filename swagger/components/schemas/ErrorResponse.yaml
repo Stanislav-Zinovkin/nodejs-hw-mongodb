@@ -1,0 +1,11 @@
+type: object
+properties:
+  message:
+    type: string
+    description: Опис помилки
+  code:
+    type: integer
+    description: HTTP код помилки
+required:
+  - message
+  - code
