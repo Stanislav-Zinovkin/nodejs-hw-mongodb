@@ -1,0 +1,23 @@
+tags:
+  - Contacts
+summary: Delete a contact by ID
+operationId: deleteContact
+desription: Deletes a contact by its unique ID
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Unique ID of the contact
+responses:
+  '204':
+    description: Contact deleted successfully
+  '404':
+    description: Contact not found
+    content: 
+      application/json:
+        schema:
+          $ref: '../../components/schemas/ErrorResponse.yaml'        

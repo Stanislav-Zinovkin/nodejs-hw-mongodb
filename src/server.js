@@ -7,6 +7,8 @@ import notfoundHandler from './middlewares/notFoundHandler.js';
 import auth from './routes/auth.js'
 import cookieParser from 'cookie-parser';
 import { UPLOAD_DIR } from './index.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from '../swagger/swagger-config.js';
 
 export const setupServer = () => {
 const app = express();
@@ -14,6 +16,8 @@ app.use(express.json());
 app.use(cors());
 app.use(pinoHttp());
 app.use(cookieParser());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/auth', auth)
 app.use('/contacts', router)
