@@ -12,14 +12,12 @@ import { swaggerDocs } from '../swagger/swagger-config.js';
 export const setupServer = () => {
   const app = express();
 
+    swaggerDocs(app);
+
   app.use(express.json());
   app.use(cors());
   app.use(pinoHttp());
   app.use(cookieParser());
-
-
-  swaggerDocs(app);
-
 
   app.use('/auth', auth);
   app.use('/contacts', router);

@@ -1,33 +1,32 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   version: 1.0.0
   title: Contacts API
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: API для управління контактами
-tags:
-  - name: Contacts
-    description: Contact management endpoints
+  description: API management endpoints
 servers:
   - url: http://localhost:3000
   - url: https://nodejs-hw-mongodb-contacts-i3qb.onrender.com
 paths:
   /contacts:
     get:
-      $ref: '../swagger/paths/contacts/get.yaml'
+      $ref: './paths/contacts/get.yaml'
     post:
-      $ref: '../swagger/paths/contacts/post.yaml'  
+      $ref: './paths/contacts/post.yaml'
 
   /contacts/{contactId}:
-   get:
-     $ref: '../../../swagger/paths/contacts/{id}/get.yaml'
-   patch:
-     $ref: '../../../swagger/paths/contacts/{id}/patch.yaml'
-   delete:
-     $ref: '../../../swagger/paths/contacts/{id}/delete.yaml'  
+    get:
+      $ref: './paths/contacts/{id}/get.yaml'
+    patch:
+      $ref: './paths/contacts/{id}/patch.yaml'
+    delete:
+      $ref: './paths/contacts/{id}/delete.yaml'
 
 components:
+  schemas:
+    Contact:
+      $ref: './components/schemas/Contact.yaml'
+    ErrorResponse:
+      $ref: './components/schemas/ErrorResponse.yaml'
   securitySchemes:
     bearerAuth:
       type: http
