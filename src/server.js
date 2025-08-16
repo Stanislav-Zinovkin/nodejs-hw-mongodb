@@ -7,29 +7,30 @@ import notfoundHandler from './middlewares/notFoundHandler.js';
 import auth from './routes/auth.js'
 import cookieParser from 'cookie-parser';
 import { UPLOAD_DIR } from './index.js';
-import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from '../swagger/swagger-config.js';
+import { swaggerDocs } from '../swagger/swagger-config.js';
 
 export const setupServer = () => {
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.use(pinoHttp());
-app.use(cookieParser());
+  const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.use('/auth', auth)
-app.use('/contacts', router)
-app.use('/uploads', express.static(UPLOAD_DIR));
-app.use(notfoundHandler);
-app.use(errorHandler);
+  app.use(express.json());
+  app.use(cors());
+  app.use(pinoHttp());
+  app.use(cookieParser());
 
 
-const PORT = process.env.PORT || 3000;
+  swaggerDocs(app);
 
-app.listen(PORT, () => {
+
+  app.use('/auth', auth);
+  app.use('/contacts', router);
+  app.use('/uploads', express.static(UPLOAD_DIR));
+
+  app.use(notfoundHandler);
+  app.use(errorHandler);
+
+  const PORT = process.env.PORT || 3000;
+
+  app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-});
-
-}
+  });
+};
