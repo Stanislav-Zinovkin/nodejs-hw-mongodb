@@ -14,11 +14,14 @@ export const swaggerDocs = (app) => {
     }
 
     const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf8"));
-
+    
+    swaggerDocument.servers = [{
+      url: "https://nodejs-hw-mongodb-contacts-i3qb.onrender.com",
+    }]
    
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-    console.log("Swagger docs available at http://localhost:4000/api-docs");
+    console.log("Swagger docs available at https://nodejs-hw-mongodb-contacts-i3qb.onrender.com",);
   } catch (err) {
     console.error("Error loading Swagger documentation:", err);
   }
