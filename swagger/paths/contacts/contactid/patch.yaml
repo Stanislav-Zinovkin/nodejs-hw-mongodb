@@ -12,7 +12,7 @@ parameters:
     schema:
       type: string
     description: Unique ID of the contact
-requestBode:
+requestBody:
   required: true
   content:
     application/json:
