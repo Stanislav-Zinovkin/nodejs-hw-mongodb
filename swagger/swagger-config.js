@@ -3,15 +3,23 @@ import fs from "fs";
 import path from "path";
 
 export const swaggerDocs = (app) => {
- 
-  const swaggerFilePath = path.join(process.cwd(), "swagger", "openapi.yaml");
+  try {
+    
+    const swaggerFilePath = path.join(process.cwd(), "docs", "swagger.json");
 
-  
-  const yaml = fs.readFileSync(swaggerFilePath, "utf8");
-  const swaggerDocument = require("js-yaml").load(yaml);
+   
+    if (!fs.existsSync(swaggerFilePath)) {
+      console.error(`Swagger file not found at ${swaggerFilePath}`);
+      return;
+    }
 
- 
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, "utf8"));
 
-  console.log("Swagger docs available at http://localhost:3000/api-docs");
+   
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+    console.log("Swagger docs available at http://localhost:4000/api-docs");
+  } catch (err) {
+    console.error("Error loading Swagger documentation:", err);
+  }
 };
