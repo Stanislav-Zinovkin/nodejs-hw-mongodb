@@ -17,23 +17,23 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: '../../components/schemas/Contact.yaml'
+        $ref: '../../../components/schemas/Contact.yaml'
 responses:
   '200':
     description: Contact updated successfully
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/Contact.yaml'
+          $ref: '../../../components/schemas/Contact.yaml'
   '400':
     description: Invalid request data
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/ErrorResponse.yaml'
+        $ref: '../../../components/schemas/ErrorResponse.yaml'
   '404':
     description: Contact not found
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/ErrorResponse.yaml'                                
+          $ref: '../../../components/schemas/ErrorResponse.yaml'                             
