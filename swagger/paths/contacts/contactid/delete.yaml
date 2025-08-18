@@ -17,7 +17,7 @@ responses:
     description: Contact deleted successfully
   '404':
     description: Contact not found
-    content: 
+    content:
       application/json:
         schema:
-          $ref: '../../../components/schemas/ErrorResponse.yaml'      
+          $ref: '../../../components/schemas/ErrorResponse.yaml'

@@ -1,8 +1,8 @@
-tags: 
+tags:
   - Contacts
 summary: Update a contact by ID
 operationId: updateContact
-description: Updates one or more fields of an existing contact by its unique ID
+description: Updates one or more fields of an existing contact
 security:
   - bearerAuth: []
 parameters:
@@ -15,25 +15,49 @@ parameters:
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
-        $ref: '../../../components/schemas/Contact.yaml'
+        type: object
+        properties:
+          name:
+            type: string
+          phoneNumber:
+            type: string
+          email:
+            type: string
+          isFavourite:
+            type: boolean
+          contactType:
+            type: string
+            enum: [work, home, personal]
+          photo:
+            type: string
+            format: binary
 responses:
   '200':
     description: Contact updated successfully
     content:
       application/json:
         schema:
-          $ref: '../../../components/schemas/Contact.yaml'
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully patched a contact
+            data:
+              $ref: '../../../components/schemas/Contact.yaml'
   '400':
-    description: Invalid request data
+    description: Missing fields to update
     content:
       application/json:
         schema:
-        $ref: '../../../components/schemas/ErrorResponse.yaml'
+          $ref: '../../../components/schemas/ErrorResponse.yaml'
   '404':
     description: Contact not found
     content:
       application/json:
         schema:
-          $ref: '../../../components/schemas/ErrorResponse.yaml'                             
+          $ref: '../../../components/schemas/ErrorResponse.yaml'

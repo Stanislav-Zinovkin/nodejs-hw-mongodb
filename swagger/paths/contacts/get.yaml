@@ -1,39 +1,91 @@
-tags: 
+tags:
   - Contacts
 summary: Get all contacts
 operationId: getAllContacts
-description: Returns a list of all contacts. Can filter by query parameters.
+description: Returns a paginated list of all contacts. Can filter by query parameters.
 security:
   - bearerAuth: []
 parameters:
-  - name: name
+  - name: page
+    in: query
+    schema:
+      type: integer
+      default: 1
+    description: Page number
+  - name: perPage
+    in: query
+    schema:
+      type: integer
+      default: 10
+    description: Number of items per page
+  - name: sortBy
     in: query
     schema:
       type: string
-    description: Filter by contact name (optional)
-  - name: contactType
+      enum: [name, email, phoneNumber]
+      default: name
+    description: Field to sort by
+  - name: sortOrder
+    in: query
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: asc
+    description: Sort order
+  - name: type
     in: query
     schema:
       type: string
       enum: [work, home, personal]
-    description: Filter by contact type (optional)
+    description: Filter by contact type
   - name: isFavourite
     in: query
     schema:
-      type: boolean
-    description: Filter contact by favourite.
+      type: string
+      enum: ['true', 'false']
+    description: Filter by favourite contacts
 responses:
   '200':
-    description: List of contacts
+    description: Paginated list of contacts
     content:
       application/json:
         schema:
-          type: array
-          items:
-            $ref: '../../components/schemas/Contact.yaml' 
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found contacts
+            data:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '../../components/schemas/Contact.yaml'
+                page:
+                  type: integer
+                  example: 1
+                perPage:
+                  type: integer
+                  example: 10
+                totalItems:
+                  type: integer
+                  example: 25
+                totalPages:
+                  type: integer
+                  example: 3
+                hasPreviousPage:
+                  type: boolean
+                  example: false
+                hasNextPage:
+                  type: boolean
+                  example: true
   '401':
     description: Unauthorized
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/ErrorResponse.yaml'                           
+          $ref: '../../components/schemas/ErrorResponse.yaml'
